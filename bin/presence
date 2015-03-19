@@ -4,14 +4,27 @@
 // so that's what we'll require for now.
 var service = require('../lib/elb')(process.env);
 
-elb.registerInstance();
+// Register the instance on startup
+service.registerInstance()
+  .then(function(response) {
+    console.log('Registered instance');
+  }).catch(function(e) {
+    console.error('Unable to register instance with the elb');
+    console.error(e);
+  });
 
-process.on('SIGINT', function() {
-  console.log('woot');
+process.on('SIGINT', deregister);
+process.on('SIGTERM', deregister);
 
-  elb.deregisterInstance();
-  process.exit();
-});
+function deregister() {
+  service.deregisterInstance()
+    .then(function(response) {
+      console.log('Deregistered instance');
+    }).catch(function(e) {
+      console.error('Unable to deregister instance with the elb');
+      console.error(e);
+    }).finally(process.exit);
+}
 
 
 // Keep things running
