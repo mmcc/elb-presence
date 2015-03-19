@@ -4,7 +4,8 @@
   "description": "elb-presence based on elb-presence by CoreOS",
   "main": "presence",
   "scripts": {
-    "test": "mocha ./test/*"
+    "test": "mocha ./test/*",
+    "start": "./bin/presence"
   },
   "repository": {
     "type": "git",
