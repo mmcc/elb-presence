@@ -143,4 +143,36 @@ describe('elb', function() {
       return expect(client.registerInstance()).to.eventually.be.an('object');
     });
   });
+
+  describe('#deregisterInstance', function() {
+    var elbStub, instanceId;
+
+    var args = {
+      ELB_NAME: 'sweet-elb-thing',
+      AWS_ACCESS_KEY: '1234',
+      AWS_SECRET_KEY: '5678',
+      AWS_REGION: 'us-east-1'
+    };
+
+    before(function() {
+      elbStub = elb.__set__({
+        AWS: {
+          ELB: function() {
+            return {
+              deregisterInstancesFromLoadBalancer: function(params, cb) {
+                return cb(null, { Instances: [{ InstanceId: instanceId }]});
+              }
+            };
+          }
+        }
+      });
+    });
+
+    it('Registers an instance with the elb', function() {
+      instanceId = args.INSTANCE_ID = 'cool-alright';
+      var client = elb(args);
+
+      return expect(client.deregisterInstance()).to.eventually.be.an('object');
+    });
+  });
 });
