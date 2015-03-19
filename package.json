@@ -1,0 +1,28 @@
+{
+  "name": "elb-presence",
+  "version": "0.0.1",
+  "description": "elb-presence based on elb-presence by CoreOS",
+  "main": "presence",
+  "scripts": {
+    "test": "mocha ./test/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mmcc/elb-presence.git"
+  },
+  "author": "Matthew McClure <mmcclure@brightcove.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mmcc/elb-presence/issues"
+  },
+  "homepage": "https://github.com/mmcc/elb-presence",
+  "dependencies": {
+    "aws-sdk": "^2.1.17",
+    "bluebird": "^2.9.14"
+  },
+  "devDependencies": {
+    "chai": "^2.1.2",
+    "chai-as-promised": "^4.3.0",
+    "rewire": "^2.3.1"
+  }
+}

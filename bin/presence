@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+
+// One day, we can add more services. For now, the only service we have is "elb",
+// so that's what we'll require for now.
+var service = require('../lib/elb')(process.env);
+
+elb.registerInstance();
+
+process.on('SIGINT', function() {
+  console.log('woot');
+
+  elb.deregisterInstance();
+  process.exit();
+});
+
+
+// Keep things running
+process.stdin.resume();
