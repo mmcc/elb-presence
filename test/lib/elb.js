@@ -1,4 +1,5 @@
 var rewire = require('rewire');
+var sinon = require('sinon');
 
 var chai = require('chai');
 var chaiAsPromised = require("chai-as-promised");
@@ -30,8 +31,32 @@ describe('elb', function() {
       expect(client.args.accessKeyId).to.equal(args.AWS_ACCESS_KEY);
       expect(client.args.secretAccessKey).to.equal(args.AWS_SECRET_KEY);
     });
+  });
 
-    it('returns an elb client', function() {
+  describe('#init', function() {
+    var elbStub, elbInstanceStub;
+
+    before(function() {
+      elbInstanceStub = sinon.spy();
+      elbStub = elb.__set__({
+        AWS: {
+          ELB: elbInstanceStub,
+          MetadataService: function() {
+            return {
+              request: function(path, cb) {
+                return cb(null, 'us-east-1d');
+              }
+            };
+          }
+        }
+      });
+    });
+
+    after(function() {
+      elbStub();
+    });
+
+    it('returns an elb client', function(done) {
       var args = {
         ELB_NAME: 'sweet-elb-thing',
         AWS_ACCESS_KEY: '1234',
@@ -39,8 +64,11 @@ describe('elb', function() {
       };
 
       var client = elb(args);
-      expect(client.elb).to.be.an('object');
-      expect(client.elb.endpoint).to.be.an('object');
+
+      return client.init().then(function(lb) {
+        expect(elbInstanceStub.called).to.be.true;
+        done();
+      });
     });
   });
 
@@ -140,7 +168,7 @@ describe('elb', function() {
       instanceId = args.INSTANCE_ID = 'cool-alright';
       var client = elb(args);
 
-      return expect(client.registerInstance()).to.eventually.be.an('object');
+      return expect(client.init().then(client.registerInstance)).to.eventually.be.an('object');
     });
   });
 
@@ -172,7 +200,7 @@ describe('elb', function() {
       instanceId = args.INSTANCE_ID = 'cool-alright';
       var client = elb(args);
 
-      return expect(client.deregisterInstance()).to.eventually.be.an('object');
+      return expect(client.init().then(client.deregisterInstance)).to.eventually.be.an('object');
     });
   });
 });

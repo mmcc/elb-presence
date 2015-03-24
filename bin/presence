@@ -5,8 +5,9 @@
 var service = require('../lib/elb')(process.env);
 
 // Register the instance on startup
-service.registerInstance()
-  .then(function(response) {
+service.init().then(function() {
+    return service.registerInstance();
+  }).then(function(response) {
     console.log('Registered instance');
   }).catch(function(e) {
     console.error('Unable to register instance with the elb');
