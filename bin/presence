@@ -27,6 +27,7 @@ function deregister() {
     }).finally(process.exit);
 }
 
-
 // Keep things running
-process.stdin.resume();
+// Docker doesn't play nice with calling resume() on process.stdin, so we'll just use
+// an old fashioned interval with a noop to keep things running.
+setInterval(function() {}, 5000);
